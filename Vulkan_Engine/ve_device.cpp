@@ -119,9 +119,12 @@ void VeDevice::pickPhysicalDevice() {
   vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
   for (const auto &device : devices) {
-    if (isDeviceSuitable(device)) {
-      physicalDevice = devices[1];
+      vkGetPhysicalDeviceProperties(device, &properties);
+    if (isDeviceSuitable(device)&&properties.deviceType== VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+      physicalDevice = device;
       break;
+    }else if(isDeviceSuitable(device) && properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU) {
+        physicalDevice = device;
     }
   }
 
