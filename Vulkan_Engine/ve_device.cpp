@@ -120,7 +120,7 @@ void VeDevice::pickPhysicalDevice() {
 
   for (const auto &device : devices) {
     if (isDeviceSuitable(device)) {
-      physicalDevice = device;
+      physicalDevice = devices[1];
       break;
     }
   }
