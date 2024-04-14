@@ -22,12 +22,17 @@ namespace ve{
 	}
 
 	void app::createPipelineLayout() {
+		VkPushConstantRange pushConstants{};
+		pushConstants.offset = 0;
+		pushConstants.size = sizeof(MeshPushConstants);
+		pushConstants.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 0;
 		pipelineLayoutInfo.pSetLayouts = nullptr;
-		pipelineLayoutInfo.pushConstantRangeCount = 0;
-		pipelineLayoutInfo.pPushConstantRanges = nullptr;
+		pipelineLayoutInfo.pushConstantRangeCount = 1;
+		pipelineLayoutInfo.pPushConstantRanges = &pushConstants;
 		if (vkCreatePipelineLayout(veDevice.device(),&pipelineLayoutInfo,nullptr,&pipelineLayout) != VK_SUCCESS) {
 			throw std::runtime_error("Failed to create pipeline layout");
 		}
@@ -57,6 +62,8 @@ namespace ve{
 		auto nowClock = std::chrono::high_resolution_clock::now();
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(startClock - nowClock).count();
 
+		
+
 		uint32_t imageIndex;
 		auto result= veSwapChain.acquireNextImage(&imageIndex);
 		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
@@ -79,10 +86,15 @@ namespace ve{
 		renderPassInfo.renderArea.extent = veSwapChain.getSwapChainExtent();
 
 		std::array<VkClearValue, 2> clearValues{};
-		clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f};
+		clearValues[0].color = { (float)pow(sin(time),2), (float)pow(sin(time+1),2), (float)pow(sin(time+2),2), 1.0f};
 		clearValues[1].depthStencil = { 1.0f, 0 };
 		renderPassInfo.clearValueCount = clearValues.size();
 		renderPassInfo.pClearValues = clearValues.data();
+
+		MeshPushConstants pushConstants{};
+		float amplitude = 0.2;
+		pushConstants.data = { amplitude * sin(time),amplitude * cos(time) };
+		vkCmdPushConstants(commandBuffers[imageIndex],pipelineLayout,VK_SHADER_STAGE_VERTEX_BIT,0,sizeof(MeshPushConstants),&pushConstants);
 
 		vkCmdBeginRenderPass(commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 		vePipeline->bind(commandBuffers[imageIndex]);

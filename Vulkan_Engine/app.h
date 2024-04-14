@@ -5,12 +5,18 @@
 #include "ve_device.h"
 #include "ve_swap_chain.h"
 #include "ve_vertex.h"
+#include <glm/glm.hpp>
 
 
 //std
 #include <memory>
 #include <vector>
 namespace ve {
+	struct MeshPushConstants {
+		glm::vec2 data;
+
+	};
+
 	class app {
 
 	public:
