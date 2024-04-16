@@ -1,7 +1,7 @@
 #include "ve_ubo.h"
 namespace ve {
-	Ubo::Ubo(VeDevice& veDevice, int& maxFramesInFlight) :_veDevice{ veDevice }, maxFrames{maxFramesInFlight} {
-		VkDeviceSize bufferSize = sizeof(UniformBufferObjetct);
+	Ubo::Ubo(VeDevice& veDevice, int maxFramesInFlight) :_veDevice{ veDevice }, maxFrames{maxFramesInFlight} {
+		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
 		uniformBuffers.resize(maxFrames);
 		uniformBuffersMemory.resize(maxFrames);
@@ -21,7 +21,7 @@ namespace ve {
 			
 		}
 	}
-	void Ubo::updateUniformBuffer(uint32_t currentImage) {
-		
+	void Ubo::updateUniformBuffer(size_t currentImage,UniformBufferObject &ubo) {
+		memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
 	}
 }

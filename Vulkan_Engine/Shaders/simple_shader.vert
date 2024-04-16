@@ -9,10 +9,27 @@ struct VSOutput
     float4 Pos : SV_Position;
     [[vk::location(0)]] float3 Color : COLOR0;
 };
-   VSOutput main(VSInput input) 
+struct MeshPushConstants
+{
+    float2 data;
+};
+[[vk::push_constant]] MeshPushConstants pushConstants;
+struct UBO
+{
+    float4x4 modelMatrix;
+    float4x4 viewMatrix;
+    float4x4 projMatrix;
+};
+cbuffer ubo : register(b0)
+{
+    UBO ubo;
+}
+
+
+   VSOutput main(VSInput input, uint InstanceIndex: SV_InstanceID) 
 {   
     VSOutput output = (VSOutput) 0;
     output.Color = input.Color;
-    output.Pos = float4(input.Pos, 0.0, 1.0);
+    output.Pos = mul(ubo.projMatrix,mul(ubo.viewMatrix, mul(ubo.modelMatrix, float4(input.Pos, 0.0, 1.0))));
     return output;
 }
