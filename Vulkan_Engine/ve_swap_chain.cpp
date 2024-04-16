@@ -12,7 +12,7 @@
 namespace ve {
 
 VeSwapChain::VeSwapChain(VeDevice &deviceRef, VkExtent2D extent)
-    : device{deviceRef}, windowExtent{extent} {
+    : device{ deviceRef }, windowExtent{ extent }{
   createSwapChain();
   createImageViews();
   createRenderPass();
@@ -413,5 +413,6 @@ VkFormat VeSwapChain::findDepthFormat() {
       VK_IMAGE_TILING_OPTIMAL,
       VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 }
+
 
 }

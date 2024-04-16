@@ -8,7 +8,7 @@ namespace ve {
 	public:
 		VeDescriptor(VeDevice& device, size_t max_frames_in_flight);
 		~VeDescriptor();
-		inline VkDescriptorSet* getDescriptorSets() { return &descriptorSets[0]; }
+		inline VkDescriptorSet *getDescriptorSets() { return &descriptorSets[0]; }
 		void createDescriptorSets(std::unique_ptr<Ubo> &uniformBuffers);
 		inline VkDescriptorSetLayout *getDescriptorLayout() { return &descriptorSetLayout; }
 	private:

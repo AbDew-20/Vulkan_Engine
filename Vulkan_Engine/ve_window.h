@@ -13,14 +13,18 @@ namespace ve {
 		VeWindow &operator = (const VeWindow&)= delete;
 		bool shouldClose() { return glfwWindowShouldClose(window); }
 		VkExtent2D getExtent() { return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)}; }
-
+		GLFWwindow* getWindow() { return window; }
 		void createWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
+		bool wasWindowResized() { return frameBufferResized; }
+		void resetWindowResizeFlag() { frameBufferResized = false; }
 	private:
 		void intWindow();
-		const int width;
-		const int height;
+		int width;
+		int height;
 		std::string windowName;
 		GLFWwindow* window;
+		static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
+		bool frameBufferResized = false;
 
 	};
 }

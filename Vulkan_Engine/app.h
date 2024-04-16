@@ -40,17 +40,19 @@ namespace ve {
 		void createModel(std::vector<Vertex>& _vertices, std::vector<uint16_t>& _indices);
 		void updateUniformBuffers(size_t currentFrame, float time);
 		void createUniformBuffer();
+		void recreateSwapChain();
 		
 
-		VeWindow veWindow{ WIDTH, HEIGHT, "Hello Vulkan!" };
+		VeWindow veWindow{ WIDTH, HEIGHT, "Vulkan" };
 		VeDevice veDevice{ veWindow };
-		VeSwapChain veSwapChain{veDevice, veWindow.getExtent()};
-		VeDescriptor veDescriptor{ veDevice, veSwapChain.MAX_FRAMES_IN_FLIGHT };
+		std::unique_ptr<VeSwapChain> veSwapChain;
+		VeDescriptor veDescriptor{ veDevice, 2};
 		std::unique_ptr<VePipeline> vePipeline;
 		VkPipelineLayout pipelineLayout;
 		std::vector<VkCommandBuffer> commandBuffers;
 		std::unique_ptr<VertexBuffer> vertexBuffer;
 		std::unique_ptr<Ubo> uniformBuffers;
+		bool frameBufferResized = false;
 		
 		
 		
