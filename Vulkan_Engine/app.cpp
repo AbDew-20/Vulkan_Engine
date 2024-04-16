@@ -97,7 +97,7 @@ namespace ve{
 		renderPassInfo.pClearValues = clearValues.data();
 		//PushConstants
 		MeshPushConstants pushConstants{};
-		float amplitude = 0.2;
+		float amplitude = 0.2f;
 		pushConstants.data = { amplitude * sin(time),amplitude * cos(time) };
 		vkCmdPushConstants(commandBuffers[imageIndex],pipelineLayout,VK_SHADER_STAGE_VERTEX_BIT,0,sizeof(MeshPushConstants),&pushConstants);
 
