@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="app.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ve_descriptor.cpp" />
     <ClCompile Include="ve_device.cpp" />
     <ClCompile Include="ve_mesh.cpp" />
     <ClCompile Include="ve_swap_chain.cpp" />
@@ -147,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app.h" />
+    <ClInclude Include="ve_descriptor.h" />
     <ClInclude Include="ve_device.h" />
     <ClInclude Include="ve_mesh.h" />
     <ClInclude Include="ve_pipeline.h" />
