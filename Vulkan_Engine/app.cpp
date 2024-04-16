@@ -4,12 +4,17 @@
 #include <chrono>
 namespace ve{
 	app::app(std::vector<Vertex> &_vertices, std::vector<uint16_t> &_indices) {
+		createDescriptorPool();
+		createDescriptorSetLayout();
 		createPipelineLayout();
 		createPipeline();
 		createModel(_vertices, _indices);
+		createUniformBuffer();
 		createCommandBuffers();
+		createDescriptorSets();
 	}
 	app::~app() {
+		vkDestroyDescriptorPool(veDevice.device(),descriptorPool,nullptr);
 		vkDestroyPipelineLayout(veDevice.device(), pipelineLayout, nullptr);
 		vkDestroyDescriptorSetLayout(veDevice.device(), descriptorSetLayout, nullptr);
 	}
@@ -29,8 +34,8 @@ namespace ve{
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		pipelineLayoutInfo.setLayoutCount = 0;
-		pipelineLayoutInfo.pSetLayouts = nullptr;
+		pipelineLayoutInfo.setLayoutCount = 1;
+		pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
 		pipelineLayoutInfo.pushConstantRangeCount = 1;
 		pipelineLayoutInfo.pPushConstantRanges = &pushConstants;
 		if (vkCreatePipelineLayout(veDevice.device(),&pipelineLayoutInfo,nullptr,&pipelineLayout) != VK_SUCCESS) {
@@ -63,7 +68,7 @@ namespace ve{
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(startClock - nowClock).count();
 
 		
-
+		//Updating command buffer
 		uint32_t imageIndex;
 		auto result= veSwapChain.acquireNextImage(&imageIndex);
 		if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
@@ -86,11 +91,11 @@ namespace ve{
 		renderPassInfo.renderArea.extent = veSwapChain.getSwapChainExtent();
 
 		std::array<VkClearValue, 2> clearValues{};
-		clearValues[0].color = { (float)pow(sin(time),2), (float)pow(sin(time+1),2), (float)pow(sin(time+2),2), 1.0f};
+		clearValues[0].color = { 0.0f, 0.0f, 0.0f, 1.0f};
 		clearValues[1].depthStencil = { 1.0f, 0 };
 		renderPassInfo.clearValueCount = clearValues.size();
 		renderPassInfo.pClearValues = clearValues.data();
-
+		//PushConstants
 		MeshPushConstants pushConstants{};
 		float amplitude = 0.2;
 		pushConstants.data = { amplitude * sin(time),amplitude * cos(time) };
@@ -106,6 +111,7 @@ namespace ve{
 
 		VkBuffer indexBuffer = vertexBuffer->getIndexBuffer();
 		vkCmdBindIndexBuffer(commandBuffers[imageIndex], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+		vkCmdBindDescriptorSets(commandBuffers[imageIndex],VK_PIPELINE_BIND_POINT_GRAPHICS,pipelineLayout,0,1,&descriptorSets[veSwapChain.getCurrentFrame()], 0, nullptr);
 
 		vkCmdDrawIndexed(commandBuffers[imageIndex], static_cast<uint32_t>(vertexBuffer->getVerticesNum()), 1, 0, 0, 0);
 		vkCmdEndRenderPass(commandBuffers[imageIndex]);
@@ -113,7 +119,7 @@ namespace ve{
 			throw std::runtime_error("failed to record command buffer");
 		}
 
-
+		updateUniformBuffers(veSwapChain.getCurrentFrame(), time);
 		result = veSwapChain.submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
 		if (result != VK_SUCCESS) {
 			throw std::runtime_error("failed to present swapchain image");
@@ -139,5 +145,63 @@ namespace ve{
 	}
 	void app::createModel(std::vector<Vertex>& _vertices, std::vector<uint16_t>& _indices) {
 		vertexBuffer = std::make_unique<VertexBuffer>(veDevice, _vertices, _indices);
+	}
+	void app::updateUniformBuffers(size_t currentFrame, float time) {
+		UniformBufferObject ubo{};
+		ubo.model = glm::rotate(glm::translate(glm::mat4(1.0f),glm::vec3(0.0f,0.0f,0.0f)), time * glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.view = glm::lookAt(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.proj = glm::perspective(glm::radians(45.0f), veSwapChain.extentAspectRatio(), 0.1f, 10.0f);
+
+		uniformBuffers->updateUniformBuffer(currentFrame,ubo);
+	}
+	void app::createUniformBuffer() {
+		uniformBuffers = std::make_unique<Ubo>(veDevice,veSwapChain.MAX_FRAMES_IN_FLIGHT);
+	}
+	void app::createDescriptorPool() {
+		VkDescriptorPoolSize poolSize{};
+		poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		poolSize.descriptorCount = static_cast<uint32_t>(veSwapChain.MAX_FRAMES_IN_FLIGHT);
+		VkDescriptorPoolCreateInfo poolInfo{};
+		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		poolInfo.poolSizeCount = 1;
+		poolInfo.pPoolSizes = &poolSize;
+		poolInfo.maxSets= static_cast<uint32_t>(veSwapChain.MAX_FRAMES_IN_FLIGHT);
+
+		if (vkCreateDescriptorPool(veDevice.device(), &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create descriptor pool");
+		}
+
+	}
+
+	void app::createDescriptorSets() {
+		std::vector<VkDescriptorSetLayout> layouts(veSwapChain.MAX_FRAMES_IN_FLIGHT,descriptorSetLayout);
+		VkDescriptorSetAllocateInfo allocInfo{};
+		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocInfo.descriptorPool = descriptorPool;
+		allocInfo.descriptorSetCount = static_cast<uint32_t>(veSwapChain.MAX_FRAMES_IN_FLIGHT);
+		allocInfo.pSetLayouts = layouts.data();
+		descriptorSets.resize(veSwapChain.MAX_FRAMES_IN_FLIGHT);
+		if (vkAllocateDescriptorSets(veDevice.device(),&allocInfo,descriptorSets.data()) != VK_SUCCESS) {
+			throw std::runtime_error("failed to allocate descriptor sets");
+		}
+
+		for (size_t i = 0; i < static_cast<uint32_t>(veSwapChain.MAX_FRAMES_IN_FLIGHT); i++) {
+			VkDescriptorBufferInfo bufferInfo{};
+			bufferInfo.buffer = uniformBuffers->getBuffer(i);
+			bufferInfo.offset = 0;
+			bufferInfo.range = sizeof(UniformBufferObject);
+
+			VkWriteDescriptorSet descriptorWrite{};
+			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrite.dstSet = descriptorSets[i];
+			descriptorWrite.dstBinding = 0;
+			descriptorWrite.dstArrayElement = 0;
+			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			descriptorWrite.descriptorCount = 1;
+			descriptorWrite.pBufferInfo = &bufferInfo;
+			descriptorWrite.pImageInfo = nullptr;
+			descriptorWrite.pTexelBufferView = nullptr;
+			vkUpdateDescriptorSets(veDevice.device(),1,&descriptorWrite,0,nullptr);
+		}
 	}
 }

@@ -6,6 +6,8 @@
 #include "ve_swap_chain.h"
 #include "ve_vertex.h"
 #include <glm/glm.hpp>
+#include "ve_ubo.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 
 //std
@@ -36,6 +38,10 @@ namespace ve {
 		void drawFrame();
 		void createDescriptorSetLayout();
 		void createModel(std::vector<Vertex>& _vertices, std::vector<uint16_t>& _indices);
+		void updateUniformBuffers(size_t currentFrame, float time);
+		void createUniformBuffer();
+		void createDescriptorPool();
+		void createDescriptorSets();
 
 		VeWindow veWindow{ WIDTH, HEIGHT, "Hello Vulkan!" };
 		VeDevice veDevice{ veWindow };
@@ -45,6 +51,9 @@ namespace ve {
 		VkDescriptorSetLayout descriptorSetLayout;
 		std::vector<VkCommandBuffer> commandBuffers;
 		std::unique_ptr<VertexBuffer> vertexBuffer;
+		std::unique_ptr<Ubo> uniformBuffers;
+		VkDescriptorPool descriptorPool;
+		std::vector<VkDescriptorSet> descriptorSets;
 		
 		
 	};

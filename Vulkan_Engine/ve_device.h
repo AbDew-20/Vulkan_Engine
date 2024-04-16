@@ -78,6 +78,7 @@ class VeDevice {
   void pickPhysicalDevice();
   void createLogicalDevice();
   void createCommandPool();
+  
 
   // helper functions
   bool isDeviceSuitable(VkPhysicalDevice device);

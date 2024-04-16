@@ -54,6 +54,7 @@ VeDevice::VeDevice(VeWindow &window) : window{window} {
   pickPhysicalDevice();
   createLogicalDevice();
   createCommandPool();
+  
 }
 
 VeDevice::~VeDevice() {
