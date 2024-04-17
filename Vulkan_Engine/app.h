@@ -46,7 +46,7 @@ namespace ve {
 		VeWindow veWindow{ WIDTH, HEIGHT, "Vulkan" };
 		VeDevice veDevice{ veWindow };
 		std::unique_ptr<VeSwapChain> veSwapChain;
-		VeDescriptor veDescriptor{ veDevice, 2};
+		VeDescriptor veDescriptor{ veDevice, veSwapChain->MAX_FRAMES_IN_FLIGHT};
 		std::unique_ptr<VePipeline> vePipeline;
 		VkPipelineLayout pipelineLayout;
 		std::vector<VkCommandBuffer> commandBuffers;

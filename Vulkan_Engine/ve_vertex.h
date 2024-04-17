@@ -35,6 +35,9 @@ namespace ve {
 		public:
 			VertexBuffer(VeDevice &device, std::vector<Vertex> &vertices, std::vector<uint16_t> &indices);
 			~VertexBuffer();
+			VertexBuffer(const VertexBuffer&) = delete;
+			VertexBuffer& operator=(const VertexBuffer&) = delete;
+
 			inline VkBuffer& getVertBuffer() { return vertexBuffer; }
 			inline VkBuffer& getIndexBuffer() { return indexBuffer; }
 			inline uint32_t getVerticesNum () { return vertNums; }

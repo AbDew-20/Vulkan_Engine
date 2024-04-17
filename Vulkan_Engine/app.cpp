@@ -149,9 +149,9 @@ namespace ve{
 	void app::recreateSwapChain() {
 		int width = 0;
 		int height = 0;
-		glfwGetFramebufferSize(veWindow.getWindow(), &width, &height);
+		veWindow.getFrameBufferSize(&width, &height);
 		while (width == 0 || height == 0) {
-			glfwGetFramebufferSize(veWindow.getWindow(), &width, &height);
+			veWindow.getFrameBufferSize(&width,&height);
 			glfwWaitEvents();
 		}
 		vkDeviceWaitIdle(veDevice.device());

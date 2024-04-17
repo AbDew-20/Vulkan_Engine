@@ -33,5 +33,8 @@ namespace ve {
 		veWindow->height = height;
 	
 	}
+	void VeWindow::getFrameBufferSize(int* width, int* height) {
+		glfwGetFramebufferSize(window,width,height);
+	}
 
 }

@@ -13,10 +13,10 @@ namespace ve {
 		VeWindow &operator = (const VeWindow&)= delete;
 		bool shouldClose() { return glfwWindowShouldClose(window); }
 		VkExtent2D getExtent() { return {static_cast<uint32_t>(width), static_cast<uint32_t>(height)}; }
-		GLFWwindow* getWindow() { return window; }
 		void createWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
-		bool wasWindowResized() { return frameBufferResized; }
+		inline bool wasWindowResized() { return frameBufferResized; }
 		void resetWindowResizeFlag() { frameBufferResized = false; }
+		void getFrameBufferSize(int *width,int *height);
 	private:
 		void intWindow();
 		int width;
