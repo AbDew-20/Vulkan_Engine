@@ -27,6 +27,7 @@ namespace ve{
 		VkDeviceMemory texImageMemory;
 		VkImageView texImageView;
 		VkSampler texSampler;
+		uint32_t mipLevels;
 	};
 
 }
