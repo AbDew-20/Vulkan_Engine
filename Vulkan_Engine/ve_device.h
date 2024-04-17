@@ -48,7 +48,7 @@ class VeDevice {
   QueueFamilyIndices findPhysicalQueueFamilies() { return findQueueFamilies(physicalDevice); }
   VkFormat findSupportedFormat(
       const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
-
+  VkPhysicalDeviceLimits getDeviceLimits();
   // Buffer Helper Functions
   void createBuffer(
       VkDeviceSize size,
@@ -70,6 +70,8 @@ class VeDevice {
   void fillBuffer(VkDeviceMemory bufferMemory, VkDeviceSize offset, VkDeviceSize size,VkMemoryMapFlags flag, const void* _src);
 
   VkPhysicalDeviceProperties properties;
+  //Image helper functions
+  void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 
  private:
   void createInstance();

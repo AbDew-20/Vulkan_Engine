@@ -6,10 +6,10 @@
 #include "ve_vertex.h"
 #include <glm/glm.hpp>
 
-	std::vector<ve::Vertex> vertices;
-	std::vector<uint16_t> indices;
+	//std::vector<ve::Vertex> vertices;
+	//std::vector<uint16_t> indices;
 	//glm::vec3 color = {1.0f,0.0f,0.0f};
-	void serpinksi(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3,int depth) {
+	/*void serpinksi(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, int depth) {
 		if (depth == 0) {
 			int offset = vertices.size();
 			std::vector<float> random;
@@ -57,18 +57,18 @@
 		serpinksi(p1, {(p1[0]+p2[0])/2,(p1[1]+p2[1])/2}, { (p1[0] + p3[0]) / 2,(p1[1] + p3[1]) / 2 }, depth);
 		serpinksi({ (p1[0] + p2[0]) / 2,(p1[1] + p2[1]) / 2 },p2, { (p2[0] + p3[0]) / 2,(p2[1] + p3[1]) / 2 },depth);
 		serpinksi({ (p1[0] + p3[0]) / 2,(p1[1] + p3[1]) / 2 }, { (p2[0] + p3[0]) / 2,(p2[1] + p3[1]) / 2 },p3,depth);
-	}
+	}*/
 
 	int main() {
-		/*std::vector<ve::Vertex> vertices = {
-		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}},
-		{{-0.5f, 0.5f}, {1.0f, 1.0f, 0.0f}}
+		std::vector<ve::Vertex> vertices = {
+		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f},{0.0f,1.0f}},
+		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f},{1.0f,1.0f}},
+		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f},{1.0f,0.0f}},
+		{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f},{0.0f,0.0f}}
 		};
 
-		std::vector<uint16_t> indices = { 0, 1, 2, 2, 3, 0 };*/
-		serpinksi({ -0.5f,0.5f }, { 0.0f,-0.5f }, {0.5,0.5},4);
+		std::vector<uint16_t> indices = { 0, 1, 2, 2, 3, 0 };
+		//serpinksi({ -0.5f,0.5f }, { 0.0f,-0.5f }, {0.5,0.5},4);
 
 		ve::app app(vertices,indices);
 

@@ -2,12 +2,14 @@ struct VSInput
 {
     [[vk::location(0)]] float2 Pos : POSITION0;
     [[vk::location(1)]] float3 Color : COlOR0;
+    [[vk::location(2)]] float2 Tex : TEXCOORD0;
 };
 
 struct VSOutput
 {
     float4 Pos : SV_Position;
     [[vk::location(0)]] float3 Color : COLOR0;
+    [[vk::location(1)]] float2 Tex : TEXCOORD0;
 };
 struct MeshPushConstants
 {
@@ -26,10 +28,11 @@ cbuffer ubo : register(b0)
 }
 
 
-   VSOutput main(VSInput input, uint InstanceIndex: SV_InstanceID) 
+   VSOutput main(VSInput input,uint instance:SV_InstanceID)
 {   
     VSOutput output = (VSOutput) 0;
     output.Color = input.Color;
     output.Pos = mul(ubo.projMatrix,mul(ubo.viewMatrix, mul(ubo.modelMatrix, float4(input.Pos, 0.0, 1.0))));
+    output.Tex = input.Tex;
     return output;
 }

@@ -45,6 +45,12 @@
     <ClCompile Include="ve_ubo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ve_descriptor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ve_texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ve_window.h">
@@ -69,6 +75,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ve_ubo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ve_descriptor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ve_texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
