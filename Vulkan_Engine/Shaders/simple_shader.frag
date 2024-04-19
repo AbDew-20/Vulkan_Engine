@@ -13,7 +13,7 @@ struct MeshPushConstants
 };
 [[vk::push_constant]] MeshPushConstants pc;
 
-SamplerState samplerColor : register(s1);
+SamplerState samplerColor[] : register(s1);
 Texture2D<float4> texturecolor[] : register(t1);
 
 float4 main(FSInput input) : SV_TARGET
@@ -22,7 +22,7 @@ float4 main(FSInput input) : SV_TARGET
     float3 lightDir;
     float lightIntensity;
     float4 color;
-    textureColor = (2-input.Instance)*float4(texturecolor[1].Sample(samplerColor, input.Tex).rgb, 1.0)+(input.Instance-1) * (float4(texturecolor[0].Sample(samplerColor, input.Tex).rgb, 1.0));
+    textureColor = float4(texturecolor[input.Instance-1].Sample(samplerColor[input.Instance-1], input.Tex).rgb, 1.0);
     lightDir = -pc.lightDirection;
     lightIntensity = saturate(dot(lightDir, input.Normal));
     color = saturate(pc.diffuseColor * lightIntensity);

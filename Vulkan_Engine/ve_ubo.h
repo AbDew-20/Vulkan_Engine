@@ -4,7 +4,7 @@
 #include <vector>
 namespace ve {
 	struct UniformBufferObject {
-		glm::mat4 model;
+		glm::mat4 model[2];
 		glm::mat4 view;
 		glm::mat4 proj;
 	};
