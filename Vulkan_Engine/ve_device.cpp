@@ -647,7 +647,7 @@ namespace ve {
         createInfo.device = device_;
         createInfo.instance = instance;
         createInfo.physicalDevice = physicalDevice;
-        createInfo.vulkanApiVersion = VK_API_VERSION_1_3;
+        createInfo.vulkanApiVersion = VK_API_VERSION_1_0;
         if (vmaCreateAllocator(&createInfo, &allocator) != VK_SUCCESS) {
             throw std::runtime_error("failed to create allocator");
         }

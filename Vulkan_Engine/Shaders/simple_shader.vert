@@ -14,6 +14,8 @@ struct VSOutput
     [[vk::location(2)]] float3 Normal : NORMAL0;
 };
 
+
+
 struct UBO
 {
     float4x4 modelMatrix;

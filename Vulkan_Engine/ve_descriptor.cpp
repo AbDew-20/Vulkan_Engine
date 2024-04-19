@@ -86,11 +86,6 @@ namespace ve {
 			imageInfo.imageView = texture[0]->getImageView();
 			imageInfo.sampler = texture[0]->getSampler();
 
-			VkDescriptorImageInfo image1Info{};
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			imageInfo.imageView = texture[1]->getImageView();
-			imageInfo.sampler = texture[1]->getSampler();
-
 			std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[0].dstSet = descriptorSets[i];
@@ -115,6 +110,7 @@ namespace ve {
 
 			vkUpdateDescriptorSets(veDevice.device(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 		}
+		
 	}
 
 }

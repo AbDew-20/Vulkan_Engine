@@ -30,6 +30,7 @@ namespace ve{
 		pushConstants.offset = 0;
 		pushConstants.size = sizeof(MeshPushConstants);
 		pushConstants.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -116,7 +117,6 @@ namespace ve{
 		VkBuffer indexBuffer = vertexBuffer->getIndexBuffer();
 		vkCmdBindIndexBuffer(commandBuffers[imageIndex], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 		vkCmdBindDescriptorSets(commandBuffers[imageIndex],VK_PIPELINE_BIND_POINT_GRAPHICS,pipelineLayout,0,1,veDescriptor.getDescriptorSets()+veSwapChain->getCurrentFrame(), 0, nullptr);
-
 		vkCmdDrawIndexed(commandBuffers[imageIndex], static_cast<uint32_t>(vertexBuffer->getVerticesNum()), 1, 0, 0, 0);
 		vkCmdEndRenderPass(commandBuffers[imageIndex]);
 		if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS) {
