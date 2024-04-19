@@ -1,7 +1,6 @@
 #pragma once
-
+#include <vk_mem_alloc.h>
 #include "ve_window.h"
-
 // std lib headers
 #include <string>
 #include <vector>
@@ -50,27 +49,27 @@ class VeDevice {
       const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
   VkPhysicalDeviceLimits getDeviceLimits();
   // Buffer Helper Functions
-  void createBuffer(
-      VkDeviceSize size,
-      VkBufferUsageFlags usage,
-      VkMemoryPropertyFlags properties,
-      VkBuffer &buffer,
-      VkDeviceMemory &bufferMemory);
+  
   VkCommandBuffer beginSingleTimeCommands();
   void endSingleTimeCommands(VkCommandBuffer commandBuffer);
   void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
   void copyBufferToImage(
       VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount);
+  VmaAllocationInfo createBuffer(VkDeviceSize size,VkBufferUsageFlags usage,VmaAllocationCreateFlags prcreationFlags,VkBuffer& buffer,VmaAllocation& bufferMemory);
+  void destroyBuffer(VkBuffer &buffer, VmaAllocation &bufferMemory);
+  void fillBuffer(VmaAllocation &bufferMemory,VkDeviceSize offset,VkDeviceSize size, const void* _src);
+  void flushAllocation(VmaAllocation& bufferMemory, VkDeviceSize size);
 
-  void createImageWithInfo(
-      const VkImageCreateInfo &imageInfo,
-      VkMemoryPropertyFlags properties,
-      VkImage &image,
-      VkDeviceMemory &imageMemory);
-  void fillBuffer(VkDeviceMemory bufferMemory, VkDeviceSize offset, VkDeviceSize size,VkMemoryMapFlags flag, const void* _src);
+  //Image helper functions
+  void createImageWithInfo(const VkImageCreateInfo& imageInfo,
+      VmaAllocationCreateFlags creationFlags,
+      VkImage& image,
+      VmaAllocation& imageMemory);
+  void destroyImage(VkImage& image, VmaAllocation& imageAllocation);
+
 
   VkPhysicalDeviceProperties properties;
-  //Image helper functions
+  
   void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout,uint32_t mipLevels);
   void generateMipmaps(VkImage image,VkFormat imageFormat,int32_t texWidth,int32_t texHeight,uint32_t mipLevels);
 
@@ -81,6 +80,7 @@ class VeDevice {
   void pickPhysicalDevice();
   void createLogicalDevice();
   void createCommandPool();
+  void createAllocator();
   
 
   // helper functions
@@ -103,6 +103,7 @@ class VeDevice {
   VkSurfaceKHR surface_;
   VkQueue graphicsQueue_;
   VkQueue presentQueue_;
+  VmaAllocator allocator;
 
   const std::vector<const char *> validationLayers = {"VK_LAYER_KHRONOS_validation"};
   const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};

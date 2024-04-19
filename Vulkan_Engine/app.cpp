@@ -29,7 +29,7 @@ namespace ve{
 		VkPushConstantRange pushConstants{};
 		pushConstants.offset = 0;
 		pushConstants.size = sizeof(MeshPushConstants);
-		pushConstants.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+		pushConstants.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -100,9 +100,10 @@ namespace ve{
 		renderPassInfo.pClearValues = clearValues.data();
 		//PushConstants
 		MeshPushConstants pushConstants{};
-		float amplitude = 0.2f;
-		pushConstants.data = { amplitude * sin(time),amplitude * cos(time) };
-		vkCmdPushConstants(commandBuffers[imageIndex],pipelineLayout,VK_SHADER_STAGE_VERTEX_BIT,0,sizeof(MeshPushConstants),&pushConstants);
+		
+		pushConstants.diffuseColor = {1.0f,1.0f,1.0f,1.0f};
+		pushConstants.lightDirection = {0.0f,1.0f,1.0f};
+		vkCmdPushConstants(commandBuffers[imageIndex],pipelineLayout,VK_SHADER_STAGE_FRAGMENT_BIT,0,sizeof(MeshPushConstants),&pushConstants);
 
 		vkCmdBeginRenderPass(commandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 		vePipeline->bind(commandBuffers[imageIndex]);
@@ -138,7 +139,7 @@ namespace ve{
 	}
 	void app::updateUniformBuffers(size_t currentFrame, float time) {
 		UniformBufferObject ubo{};
-		ubo.model= glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, pow(sin(time/2),2)*6.0f)), time * glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model= glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)), sin(time)*glm::radians(80.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ubo.view = glm::lookAt(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ubo.proj = glm::perspective(glm::radians(45.0f), veSwapChain->extentAspectRatio(), 0.1f, 10.0f);
 		ubo.proj[1][1] *= -1;

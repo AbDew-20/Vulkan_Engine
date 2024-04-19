@@ -17,7 +17,8 @@
 #include <vector>
 namespace ve {
 	struct MeshPushConstants {
-		glm::vec2 data;
+		glm::vec4 diffuseColor;
+		glm::vec3 lightDirection;
 
 	};
 

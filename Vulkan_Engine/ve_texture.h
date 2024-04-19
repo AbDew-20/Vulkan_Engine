@@ -25,6 +25,7 @@ namespace ve{
 		VeDevice& veDevice;
 		VkImage texImage;
 		VkDeviceMemory texImageMemory;
+		VmaAllocation texImageAllocation;
 		VkImageView texImageView;
 		VkSampler texSampler;
 		uint32_t mipLevels;

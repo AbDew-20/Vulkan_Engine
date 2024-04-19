@@ -14,8 +14,8 @@ namespace ve {
 	VeTexture::~VeTexture() {
 		vkDestroySampler(veDevice.device(), texSampler, nullptr);
 		vkDestroyImageView(veDevice.device(),texImageView,nullptr);
-		vkDestroyImage(veDevice.device(),texImage,nullptr);
-		vkFreeMemory(veDevice.device(),texImageMemory,nullptr);
+
+		veDevice.destroyImage(texImage,texImageAllocation);
 	}
 
 	void VeTexture::createTextureImage() {
@@ -28,9 +28,10 @@ namespace ve {
 		mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
 
 		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		veDevice.createBuffer(imageSize,VK_BUFFER_USAGE_TRANSFER_SRC_BIT,VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT|VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,stagingBuffer,stagingBufferMemory);
-		veDevice.fillBuffer(stagingBufferMemory,0,imageSize,0,pixels);
+
+		VmaAllocation staginBufferAllocation;
+		(void)veDevice.createBuffer(imageSize,VK_BUFFER_USAGE_TRANSFER_SRC_BIT,VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT,stagingBuffer,staginBufferAllocation);
+		veDevice.fillBuffer(staginBufferAllocation,0,imageSize,pixels);
 		stbi_image_free(pixels);
 
 		VkImageCreateInfo imageInfo{};
@@ -49,14 +50,12 @@ namespace ve {
 		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 		imageInfo.flags = 0;//optional
 		
-		veDevice.createImageWithInfo(imageInfo,VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,texImage,texImageMemory);
+		veDevice.createImageWithInfo(imageInfo,0,texImage,texImageAllocation);
 		veDevice.transitionImageLayout(texImage,VK_FORMAT_R8G8B8A8_SRGB,VK_IMAGE_LAYOUT_UNDEFINED,VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,mipLevels);
 		veDevice.copyBufferToImage(stagingBuffer,texImage,static_cast<uint32_t>(texWidth),static_cast<uint32_t>(texHeight),1);
-		//veDevice.transitionImageLayout(texImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,mipLevels);
 		veDevice.generateMipmaps(texImage,VK_FORMAT_R8G8B8A8_SRGB,texWidth,texHeight,mipLevels);
 
-		vkDestroyBuffer(veDevice.device(),stagingBuffer,nullptr);
-		vkFreeMemory(veDevice.device(),stagingBufferMemory,nullptr);
+		veDevice.destroyBuffer(stagingBuffer,staginBufferAllocation);
 	}
 
 	void VeTexture::createTextureImageView() {
