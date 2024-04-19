@@ -6,6 +6,8 @@ namespace ve {
 	struct Vertex {
 		glm::vec2 pos;
 		glm::vec3 color;
+		glm::vec2 texCoord;
+		glm::vec3 normal;
 
 		static VkVertexInputBindingDescription getBindingDescription() {
 			VkVertexInputBindingDescription bindingDescription{};
@@ -14,8 +16,8 @@ namespace ve {
 			bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 			return bindingDescription;
 		}
-		static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
-			std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions;
+		static std::array<VkVertexInputAttributeDescription, 4> getAttributeDescriptions() {
+			std::array<VkVertexInputAttributeDescription, 4> attributeDescriptions;
 			attributeDescriptions[0].binding = 0;
 			attributeDescriptions[0].location = 0;
 			attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
@@ -26,7 +28,16 @@ namespace ve {
 			attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
 			attributeDescriptions[1].offset = offsetof(Vertex, color);
 
-			
+			attributeDescriptions[2].binding = 0;
+			attributeDescriptions[2].location = 2;
+			attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+			attributeDescriptions[2].offset = offsetof(Vertex, texCoord);
+
+			attributeDescriptions[3].binding = 0;
+			attributeDescriptions[3].location = 3;
+			attributeDescriptions[3].format = VK_FORMAT_R32G32B32_SFLOAT;
+			attributeDescriptions[3].offset = offsetof(Vertex,normal);
+
 			return attributeDescriptions;
 		}
 	};
@@ -35,6 +46,9 @@ namespace ve {
 		public:
 			VertexBuffer(VeDevice &device, std::vector<Vertex> &vertices, std::vector<uint16_t> &indices);
 			~VertexBuffer();
+			VertexBuffer(const VertexBuffer&) = delete;
+			VertexBuffer& operator=(const VertexBuffer&) = delete;
+
 			inline VkBuffer& getVertBuffer() { return vertexBuffer; }
 			inline VkBuffer& getIndexBuffer() { return indexBuffer; }
 			inline uint32_t getVerticesNum () { return vertNums; }
@@ -46,7 +60,9 @@ namespace ve {
 			uint32_t vertNums;
 			VkBuffer vertexBuffer;
 			VkDeviceMemory vertexBufferMemory;
+			VmaAllocation vertexAllocation;
 			VkBuffer indexBuffer;
+			VmaAllocation indexAllocation;
 			VkDeviceMemory indexBufferMemory;
 			VeDevice& veDevice;
 		

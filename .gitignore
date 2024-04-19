@@ -362,5 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 *.tga
-/Vulkan_Engine/Shaders/simple_shader.frag.spv
-/Vulkan_Engine/Shaders/simple_shader.vert.spv
+
+*.jpg

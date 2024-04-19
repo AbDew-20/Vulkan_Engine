@@ -104,13 +104,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\abhis\Documents\Visual Studio 2022\Libraries\stb;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glm;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glfw-3.4.bin.WIN64\include;C:\VulkanSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\abhis\Documents\Visual Studio 2022\Libraries\Vma;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\stb;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glm;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glfw-3.4.bin.WIN64\include;C:\VulkanSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\Lib;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\abhis\Documents\Visual Studio 2022\Libraries\Vma;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\stb;C:\VulkanSDK\Lib;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\abhis\Documents\Visual Studio 2022\Libraries\stb;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glm;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glfw-3.4.bin.WIN64\include;C:\VulkanSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\abhis\Documents\Visual Studio 2022\Libraries\Vma;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\stb;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glm;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glfw-3.4.bin.WIN64\include;C:\VulkanSDK\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -130,27 +130,32 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\Lib;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\abhis\Documents\Visual Studio 2022\Libraries\Vma;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\stb;C:\VulkanSDK\Lib;C:\Users\abhis\Documents\Visual Studio 2022\Libraries\glfw-3.4.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="app.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ve_descriptor.cpp" />
     <ClCompile Include="ve_device.cpp" />
     <ClCompile Include="ve_mesh.cpp" />
     <ClCompile Include="ve_swap_chain.cpp" />
+    <ClCompile Include="ve_texture.cpp" />
     <ClCompile Include="ve_ubo.cpp" />
     <ClCompile Include="ve_vertex.cpp" />
     <ClCompile Include="ve_window.cpp" />
     <ClCompile Include="ve_pipeline.cpp" />
+    <ClCompile Include="VmaUsage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app.h" />
+    <ClInclude Include="ve_descriptor.h" />
     <ClInclude Include="ve_device.h" />
     <ClInclude Include="ve_mesh.h" />
     <ClInclude Include="ve_pipeline.h" />
     <ClInclude Include="ve_swap_chain.h" />
+    <ClInclude Include="ve_texture.h" />
     <ClInclude Include="ve_ubo.h" />
     <ClInclude Include="ve_vertex.h" />
     <ClInclude Include="ve_window.h" />

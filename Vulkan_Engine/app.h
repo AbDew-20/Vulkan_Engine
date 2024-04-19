@@ -8,6 +8,8 @@
 #include <glm/glm.hpp>
 #include "ve_ubo.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "ve_descriptor.h"
+#include "ve_texture.h"
 
 
 //std
@@ -15,7 +17,8 @@
 #include <vector>
 namespace ve {
 	struct MeshPushConstants {
-		glm::vec2 data;
+		glm::vec4 diffuseColor;
+		glm::vec3 lightDirection;
 
 	};
 
@@ -36,24 +39,26 @@ namespace ve {
 		void createPipeline();
 		void createCommandBuffers();
 		void drawFrame();
-		void createDescriptorSetLayout();
 		void createModel(std::vector<Vertex>& _vertices, std::vector<uint16_t>& _indices);
 		void updateUniformBuffers(size_t currentFrame, float time);
 		void createUniformBuffer();
-		void createDescriptorPool();
-		void createDescriptorSets();
+		void recreateSwapChain();
+		void loadTextures();
+		
 
-		VeWindow veWindow{ WIDTH, HEIGHT, "Hello Vulkan!" };
+		VeWindow veWindow{ WIDTH, HEIGHT, "Vulkan" };
 		VeDevice veDevice{ veWindow };
-		VeSwapChain veSwapChain{veDevice, veWindow.getExtent()};
+		std::unique_ptr<VeSwapChain> veSwapChain;
+		VeDescriptor veDescriptor{ veDevice, veSwapChain->MAX_FRAMES_IN_FLIGHT};
 		std::unique_ptr<VePipeline> vePipeline;
 		VkPipelineLayout pipelineLayout;
-		VkDescriptorSetLayout descriptorSetLayout;
 		std::vector<VkCommandBuffer> commandBuffers;
 		std::unique_ptr<VertexBuffer> vertexBuffer;
 		std::unique_ptr<Ubo> uniformBuffers;
-		VkDescriptorPool descriptorPool;
-		std::vector<VkDescriptorSet> descriptorSets;
+		std::unique_ptr<VeTexture> textures;
+		std::vector<std::unique_ptr<VeTexture>> mulTextures;
+		bool frameBufferResized = false;
+		
 		
 		
 	};

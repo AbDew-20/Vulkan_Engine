@@ -5,23 +5,21 @@ namespace ve {
 
 		uniformBuffers.resize(maxFrames);
 		uniformBuffersMemory.resize(maxFrames);
+		uniformBufferAllocation.resize(maxFrames);
 		uniformBuffersMapped.resize(maxFrames);
 		for (int i = 0; i < maxFrames; i++) {
-			_veDevice.createBuffer(bufferSize,VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT|VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,uniformBuffers[i],uniformBuffersMemory[i]);
 
-			vkMapMemory(_veDevice.device(), uniformBuffersMemory[i], 0,bufferSize,0,&uniformBuffersMapped[i]);
+			uniformBuffersMapped[i]=(_veDevice.createBuffer(bufferSize,VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT|VMA_ALLOCATION_CREATE_MAPPED_BIT,uniformBuffers[i],uniformBufferAllocation[i])).pMappedData;
 		}
 
 	}
 	Ubo::~Ubo() {
 		for (int i = 0; i < maxFrames; i++) {
-			vkUnmapMemory(_veDevice.device(),uniformBuffersMemory[i]);
-			vkDestroyBuffer(_veDevice.device(),uniformBuffers[i],nullptr);
-			vkFreeMemory(_veDevice.device(),uniformBuffersMemory[i],nullptr);
-			
+			_veDevice.destroyBuffer(uniformBuffers[i],uniformBufferAllocation[i]);
 		}
 	}
 	void Ubo::updateUniformBuffer(size_t currentImage,UniformBufferObject &ubo) {
 		memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
+		_veDevice.flushAllocation(uniformBufferAllocation[currentImage],sizeof(ubo));
 	}
 }
