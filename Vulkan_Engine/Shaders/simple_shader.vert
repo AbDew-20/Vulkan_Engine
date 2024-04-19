@@ -33,9 +33,9 @@ cbuffer ubo : register(b0)
 {   
     VSOutput output = (VSOutput) 0;
     output.Color = input.Color;
-    output.Pos = mul(ubo.projMatrix, mul(ubo.viewMatrix, mul(ubo.modelMatrix[instance-1], float4(input.Pos.r, input.Pos.g, 0.0, 1.0))));
+    output.Pos = mul(ubo.projMatrix, mul(ubo.viewMatrix, mul(ubo.modelMatrix[instance], float4(input.Pos.r, input.Pos.g, 0.0, 1.0))));
     output.Tex = input.Tex;
-    output.Normal = mul((float3x3)ubo.modelMatrix[instance-1], input.Normal );
+    output.Normal = mul((float3x3)ubo.modelMatrix[instance], input.Normal );
     output.Normal = normalize(output.Normal);
     output.Instance = instance;
     return output;
