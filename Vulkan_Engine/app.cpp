@@ -117,7 +117,7 @@ namespace ve{
 		VkBuffer indexBuffer = vertexBuffer->getIndexBuffer();
 		vkCmdBindIndexBuffer(commandBuffers[imageIndex], indexBuffer, 0, VK_INDEX_TYPE_UINT16);
 		vkCmdBindDescriptorSets(commandBuffers[imageIndex],VK_PIPELINE_BIND_POINT_GRAPHICS,pipelineLayout,0,1,veDescriptor.getDescriptorSets()+veSwapChain->getCurrentFrame(), 0, nullptr);
-		vkCmdDrawIndexed(commandBuffers[imageIndex], static_cast<uint32_t>(vertexBuffer->getVerticesNum()), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffers[imageIndex], static_cast<uint32_t>(vertexBuffer->getVerticesNum()), 2, 0, 0, 1);
 		vkCmdEndRenderPass(commandBuffers[imageIndex]);
 		if (vkEndCommandBuffer(commandBuffers[imageIndex]) != VK_SUCCESS) {
 			throw std::runtime_error("failed to record command buffer");

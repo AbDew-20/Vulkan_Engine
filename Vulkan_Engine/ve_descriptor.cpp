@@ -18,7 +18,7 @@ namespace ve {
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 		poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		poolSizes[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+		poolSizes[1].descriptorCount = static_cast<uint32_t>(2*MAX_FRAMES_IN_FLIGHT);
 		
 		VkDescriptorPoolCreateInfo poolInfo{};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -42,7 +42,7 @@ namespace ve {
 		
 		VkDescriptorSetLayoutBinding samplerLayoutBinding{};
 		samplerLayoutBinding.binding = 1;
-		samplerLayoutBinding.descriptorCount = 1;
+		samplerLayoutBinding.descriptorCount = 2;
 		samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		samplerLayoutBinding.pImmutableSamplers = nullptr;
 		samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -81,10 +81,14 @@ namespace ve {
 			bufferInfo.offset = 0;
 			bufferInfo.range = sizeof(UniformBufferObject);
 
-			VkDescriptorImageInfo imageInfo{};
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			imageInfo.imageView = texture[0]->getImageView();
-			imageInfo.sampler = texture[0]->getSampler();
+			VkDescriptorImageInfo imageInfo[2];
+			imageInfo[0].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			imageInfo[0].imageView = texture[0]->getImageView();
+			imageInfo[0].sampler = texture[0]->getSampler();
+
+			imageInfo[1].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			imageInfo[1].imageView = texture[1]->getImageView();
+			imageInfo[1].sampler = texture[1]->getSampler();
 
 			std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -103,10 +107,11 @@ namespace ve {
 			descriptorWrites[1].dstBinding = 1;
 			descriptorWrites[1].dstArrayElement = 0;
 			descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			descriptorWrites[1].descriptorCount = 1;
+			descriptorWrites[1].descriptorCount = 2;
 			descriptorWrites[1].pBufferInfo = nullptr;
-			descriptorWrites[1].pImageInfo = &imageInfo;
+			descriptorWrites[1].pImageInfo = imageInfo;
 			descriptorWrites[1].pTexelBufferView = nullptr;
+
 
 			vkUpdateDescriptorSets(veDevice.device(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 		}
