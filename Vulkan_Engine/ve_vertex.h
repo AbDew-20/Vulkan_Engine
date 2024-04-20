@@ -1,13 +1,25 @@
 #pragma once
+#define GLM_ENABLE_EXPERIMENTAL
 #include "ve_device.h"
 #include <glm/glm.hpp>
 #include <array>
+#include <glm/gtx/hash.hpp>
+using namespace std;
+
+
+
 namespace ve {
+	
+
 	struct Vertex {
 		glm::vec3 pos;
 		glm::vec3 color;
 		glm::vec2 texCoord;
 		glm::vec3 normal;
+
+		bool operator==(const Vertex& other) const {
+			return pos == other.pos && color == other.color && texCoord == other.texCoord;
+		}
 
 		static VkVertexInputBindingDescription getBindingDescription() {
 			VkVertexInputBindingDescription bindingDescription{};
@@ -70,3 +82,11 @@ namespace ve {
 	};
 
 }
+template<> struct hash<ve::Vertex> {
+	size_t operator()(ve::Vertex const& vertex) const {
+		return ((hash<glm::vec3>()(vertex.pos) ^
+			(hash<glm::vec3>()(vertex.color) << 1)) >> 1) ^
+			((hash<glm::vec2>()(vertex.texCoord) << 1)^
+			(hash<glm::vec3>()(vertex.normal)<<1)>>1);
+	}
+};

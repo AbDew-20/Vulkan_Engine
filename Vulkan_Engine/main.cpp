@@ -6,6 +6,7 @@
 #include "ve_vertex.h"
 #include <glm/glm.hpp>
 #include <tiny_obj_loader.h>
+#include <unordered_map>
 
 	std::vector<ve::Vertex> vertices;
 	std::vector<uint16_t> indices;
@@ -70,7 +71,7 @@
 		if(!(tinyobj::LoadObj(&attrib,&shapes,&materials,&err,MODEL_PATH.c_str()))){
 			throw std::runtime_error(err);
 		}
-
+		std::unordered_map<ve::Vertex, uint16_t> uniqueVertices{};
 		for(const auto& shape : shapes) {
 			for (const auto& index : shape.mesh.indices) {
 				ve::Vertex vertex{};
@@ -78,8 +79,13 @@
 				vertex.texCoord = {attrib.texcoords[2*index.texcoord_index+0],1-attrib.texcoords[2*index.texcoord_index+1]};
 				vertex.normal = { attrib.normals[3 * index.normal_index + 0],attrib.normals[3 * index.normal_index + 1],attrib.normals[3 * index.normal_index + 2] };
 				vertex.color = {1.0f,1.0f,1.0f};
-				vertices.push_back(vertex);
-				indices.push_back(indices.size());
+
+				if (uniqueVertices.count(vertex) == 0) {
+					uniqueVertices[vertex] = static_cast<uint16_t>(vertices.size());
+					vertices.push_back(vertex);
+				}
+				
+				indices.push_back(uniqueVertices[vertex]);
 				
 			}
 		}
