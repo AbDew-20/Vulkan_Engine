@@ -21,12 +21,14 @@ float4 main(FSInput input) : SV_TARGET
     float4 textureColor;
     float3 lightDir;
     float lightIntensity;
-    float4 color;
+    float4 color = { 0.1,0.1,0.1,1.0};
     textureColor = float4(texturecolor[input.Instance].Sample(samplerColor[input.Instance], input.Tex).rgb, 1.0);
     lightDir = -pc.lightDirection;
     lightIntensity = saturate(dot(lightDir, input.Normal));
-    color = saturate(pc.diffuseColor * lightIntensity);
+    color += pc.diffuseColor * lightIntensity;
+    color = saturate(color);
     color = color * textureColor;
+    //color = textureColor;
     
     return color;
 }

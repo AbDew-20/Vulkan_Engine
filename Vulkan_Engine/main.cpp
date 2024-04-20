@@ -1,13 +1,15 @@
-
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "app.h"
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 #include "ve_vertex.h"
 #include <glm/glm.hpp>
+#include <tiny_obj_loader.h>
 
-	//std::vector<ve::Vertex> vertices;
-	//std::vector<uint16_t> indices;
+	std::vector<ve::Vertex> vertices;
+	std::vector<uint16_t> indices;
+	const std::string MODEL_PATH = "Models/cube.obj";
 	//glm::vec3 color = {1.0f,0.0f,0.0f};
 	/*void serpinksi(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, int depth) {
 		if (depth == 0) {
@@ -59,18 +61,36 @@
 		serpinksi({ (p1[0] + p3[0]) / 2,(p1[1] + p3[1]) / 2 }, { (p2[0] + p3[0]) / 2,(p2[1] + p3[1]) / 2 },p3,depth);
 	}*/
 
+	void loadMesh() {
+		tinyobj::attrib_t attrib;
+		std::vector<tinyobj::shape_t> shapes;
+		std::vector<tinyobj::material_t> materials;
+		std::string warn, err;
+
+		if(!(tinyobj::LoadObj(&attrib,&shapes,&materials,&err,MODEL_PATH.c_str()))){
+			throw std::runtime_error(err);
+		}
+
+		for(const auto& shape : shapes) {
+			for (const auto& index : shape.mesh.indices) {
+				ve::Vertex vertex{};
+				vertex.pos = {attrib.vertices[3*index.vertex_index+0],attrib.vertices[3*index.vertex_index+1],attrib.vertices[3*index.vertex_index+2]};
+				vertex.texCoord = {attrib.texcoords[2*index.texcoord_index+0],1-attrib.texcoords[2*index.texcoord_index+1]};
+				vertex.normal = { attrib.normals[3 * index.normal_index + 0],attrib.normals[3 * index.normal_index + 1],attrib.normals[3 * index.normal_index + 2] };
+				vertex.color = {1.0f,1.0f,1.0f};
+				vertices.push_back(vertex);
+				indices.push_back(indices.size());
+				
+			}
+		}
+	
+	}
+
 	int main() {
 
-		std::vector<ve::Vertex> vertices = {
-		{{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f},{0.0f,1.0f},{0.0f,0.0f,-1.0f}},
-		{{0.5f, -0.5f}, {0.0f, 1.0f, 0.0f},{1.0f,1.0f},{0.0f,0.0f,-1.0f}},
-		{{0.5f, 0.5f}, {0.0f, 0.0f, 1.0f},{1.0f,0.0f},{0.0f,0.0f,-1.0f}},
-		{{-0.5f, 0.5f}, {1.0f, 1.0f, 1.0f},{0.0f,0.0f},{0.0f,0.0f,-1.0f}}
-		};
 
-		std::vector<uint16_t> indices = { 0, 1, 2, 2, 3, 0 };
 		//serpinksi({ -0.5f,0.5f }, { 0.0f,-0.5f }, {0.5,0.5},4);
-
+		loadMesh();
 		ve::app app(vertices,indices);
 
 		try {

@@ -1,6 +1,6 @@
 struct VSInput
 {
-    [[vk::location(0)]] float2 Pos : POSITION0;
+    [[vk::location(0)]] float3 Pos : POSITION0;
     [[vk::location(1)]] float3 Color : COlOR0;
     [[vk::location(2)]] float2 Tex : TEXCOORD0;
     [[vk::location(3)]] float3 Normal : NORMAL;
@@ -33,7 +33,7 @@ cbuffer ubo : register(b0)
 {   
     VSOutput output = (VSOutput) 0;
     output.Color = input.Color;
-    output.Pos = mul(ubo.projMatrix, mul(ubo.viewMatrix, mul(ubo.modelMatrix[instance], float4(input.Pos.r, input.Pos.g, 0.0, 1.0))));
+    output.Pos = mul(ubo.projMatrix, mul(ubo.viewMatrix, mul(ubo.modelMatrix[instance], float4(input.Pos, 1.0))));
     output.Tex = input.Tex;
     output.Normal = mul((float3x3)ubo.modelMatrix[instance], input.Normal );
     output.Normal = normalize(output.Normal);

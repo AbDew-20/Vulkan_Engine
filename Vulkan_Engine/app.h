@@ -1,5 +1,5 @@
 #pragma once
-
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "ve_window.h"
 #include "ve_pipeline.h"
 #include "ve_device.h"
