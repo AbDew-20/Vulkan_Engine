@@ -4,7 +4,7 @@ namespace ve {
 		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
 		uniformBuffers.resize(maxFrames);
-		uniformBuffersMemory.resize(maxFrames);
+		//uniformBuffersMemory.resize(maxFrames);
 		uniformBufferAllocation.resize(maxFrames);
 		uniformBuffersMapped.resize(maxFrames);
 		for (int i = 0; i < maxFrames; i++) {

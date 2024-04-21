@@ -4,6 +4,7 @@
 #include "ve_texture.h"
 #include <memory>
 #include <array>
+#include "ve_Light.h"
 
 namespace ve {
 	class VeDescriptor {
@@ -15,7 +16,7 @@ namespace ve {
 		VeDescriptor& operator=(const VeDescriptor&) = delete;
 
 		inline VkDescriptorSet *getDescriptorSets() { return &descriptorSets[0]; }
-		void createDescriptorSets(std::unique_ptr<Ubo> &uniformBuffers, std::vector<std::unique_ptr<VeTexture>> &texture);
+		void createDescriptorSets(std::unique_ptr<Ubo> &uniformBuffers, std::vector<std::unique_ptr<VeTexture>> &texture,std::unique_ptr<VeLight> &lightBuffer);
 		inline VkDescriptorSetLayout *getDescriptorLayout() { return &descriptorSetLayout; }
 	private:
 		void createDescriptorPool();

@@ -10,7 +10,8 @@ namespace ve{
 		loadTextures();
 		createUniformBuffer();
 		createCommandBuffers();
-		veDescriptor.createDescriptorSets(uniformBuffers, mulTextures);
+		createLights();
+		veDescriptor.createDescriptorSets(uniformBuffers, mulTextures, lightBuffer);
 		
 	}
 	app::~app() {
@@ -139,16 +140,17 @@ namespace ve{
 	}
 	void app::updateUniformBuffers(size_t currentFrame, float time) {
 		UniformBufferObject ubo{};
-		ubo.model[0] = glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.8f, 0.0f, 1.0f)), time * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		ubo.model[1] = glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(-0.8f, 0.0f, 1.0f)), -time * glm::radians(50.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model[0] = glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(0.8f, 0.0f, 1.0f)), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.model[1] = glm::rotate(glm::translate(glm::mat4(1.0f), glm::vec3(-0.8f, 0.0f, 1.0f)), glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ubo.view = glm::lookAt(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ubo.proj = glm::perspective(glm::radians(45.0f), veSwapChain->extentAspectRatio(), 0.1f, 10.0f);
 		ubo.proj[1][1] *= -1;
 
-		uniformBuffers->updateUniformBuffer(currentFrame,ubo);
+		uniformBuffers->updateUniformBuffer(currentFrame, ubo);
 	}
 	void app::createUniformBuffer() {
 		uniformBuffers = std::make_unique<Ubo>(veDevice,veSwapChain->MAX_FRAMES_IN_FLIGHT);
+
 	}
 	void app::recreateSwapChain() {
 		int width = 0;
@@ -168,6 +170,13 @@ namespace ve{
 		mulTextures.push_back(std::make_unique<VeTexture>(veDevice, "Textures/stone01.tga"));
 		textures = std::make_unique<VeTexture>(veDevice,"Textures/stone01.tga");
 	
+	}
+	void app::createLights() {
+		LightUBO lightData{};
+		lightData.lightColor = {1.0f,0.0f,0.0f};
+		lightData.lightIntensity = 1.0f;
+		lightData.lightPos = glm::vec3(0.0f,0.0f,0.3f);
+		lightBuffer = std::make_unique<VeLight>(veDevice,lightData,veSwapChain->MAX_FRAMES_IN_FLIGHT);
 	}
 	
 }

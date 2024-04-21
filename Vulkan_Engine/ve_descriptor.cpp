@@ -16,7 +16,8 @@ namespace ve {
 	void VeDescriptor::createDescriptorPool() {
 		std::array<VkDescriptorPoolSize, 2> poolSizes{};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSizes[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+		poolSizes[0].descriptorCount = static_cast<uint32_t>(2*MAX_FRAMES_IN_FLIGHT);
+
 		poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		poolSizes[1].descriptorCount = static_cast<uint32_t>(2*MAX_FRAMES_IN_FLIGHT);
 		
@@ -47,8 +48,15 @@ namespace ve {
 		samplerLayoutBinding.pImmutableSamplers = nullptr;
 		samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
+		VkDescriptorSetLayoutBinding lightLayoutBinding{};
+		lightLayoutBinding.binding = 2;
+		lightLayoutBinding.descriptorCount = 1;
+		lightLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		lightLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT|VK_SHADER_STAGE_FRAGMENT_BIT;
+		lightLayoutBinding.pImmutableSamplers = nullptr;
 
-		std::array<VkDescriptorSetLayoutBinding,2> bindings = { uboLayoutBinding,samplerLayoutBinding};
+
+		std::array<VkDescriptorSetLayoutBinding,3> bindings = { uboLayoutBinding,samplerLayoutBinding,lightLayoutBinding};
 
 		VkDescriptorSetLayoutCreateInfo layoutInfo{};
 		layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -63,7 +71,7 @@ namespace ve {
 
 	}
 
-	void VeDescriptor::createDescriptorSets(std::unique_ptr<Ubo> &uniformBuffers,std::vector<std::unique_ptr<VeTexture>> &texture) {
+	void VeDescriptor::createDescriptorSets(std::unique_ptr<Ubo> &uniformBuffers,std::vector<std::unique_ptr<VeTexture>> &texture, std::unique_ptr<VeLight>& lightBuffer) {
 		std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout);
 		VkDescriptorSetAllocateInfo allocInfo{};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -90,7 +98,12 @@ namespace ve {
 			imageInfo[1].imageView = texture[1]->getImageView();
 			imageInfo[1].sampler = texture[1]->getSampler();
 
-			std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
+			VkDescriptorBufferInfo lightInfo{};
+			lightInfo.buffer = lightBuffer->getBuffer();
+			lightInfo.offset = 0;
+			lightInfo.range = sizeof(LightUBO);
+
+			std::array<VkWriteDescriptorSet, 3> descriptorWrites{};
 			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 			descriptorWrites[0].dstSet = descriptorSets[i];
 			descriptorWrites[0].dstBinding = 0;
@@ -111,6 +124,16 @@ namespace ve {
 			descriptorWrites[1].pBufferInfo = nullptr;
 			descriptorWrites[1].pImageInfo = imageInfo;
 			descriptorWrites[1].pTexelBufferView = nullptr;
+
+			descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			descriptorWrites[2].dstSet = descriptorSets[i];
+			descriptorWrites[2].dstBinding = 2;
+			descriptorWrites[2].dstArrayElement = 0;
+			descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			descriptorWrites[2].descriptorCount = 1;
+			descriptorWrites[2].pBufferInfo = &lightInfo;
+			descriptorWrites[2].pImageInfo = nullptr;
+			descriptorWrites[2].pTexelBufferView = nullptr;
 
 
 			vkUpdateDescriptorSets(veDevice.device(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);

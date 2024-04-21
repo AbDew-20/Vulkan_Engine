@@ -20,7 +20,7 @@ namespace ve {
 
 	private:
 		std::vector<VkBuffer> uniformBuffers;
-		std::vector<VkDeviceMemory> uniformBuffersMemory;
+		//std::vector<VkDeviceMemory> uniformBuffersMemory;
 		std::vector<VmaAllocation> uniformBufferAllocation;
 		std::vector<void*> uniformBuffersMapped;
 		VeDevice& _veDevice;

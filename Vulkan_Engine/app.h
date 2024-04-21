@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "ve_descriptor.h"
 #include "ve_texture.h"
+#include "ve_Light.h"
 
 
 //std
@@ -44,6 +45,7 @@ namespace ve {
 		void createUniformBuffer();
 		void recreateSwapChain();
 		void loadTextures();
+		void createLights();
 		
 
 		VeWindow veWindow{ WIDTH, HEIGHT, "Vulkan" };
@@ -57,6 +59,7 @@ namespace ve {
 		std::unique_ptr<Ubo> uniformBuffers;
 		std::unique_ptr<VeTexture> textures;
 		std::vector<std::unique_ptr<VeTexture>> mulTextures;
+		std::unique_ptr<VeLight> lightBuffer;
 		bool frameBufferResized = false;
 		
 		
